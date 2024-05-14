@@ -3,12 +3,12 @@ import gpxpy
 import gpxpy.gpx
 import streamlit as st
 
-def csv_to_gpx(csv_file, gpx_file):
+def csv_to_gpx(csv_content, gpx_file):
     # Create a new GPX object
     gpx = gpxpy.gpx.GPX()
 
     # Read the CSV data
-    reader = csv.reader(csv_file)
+    reader = csv.reader(csv_content)
     for row in reader:
         try:
             # Extract data from CSV
@@ -36,8 +36,11 @@ output_filename = st.text_input("Enter output GPX filename", "output.gpx")
 
 if st.button("Convert"):
     if uploaded_csv and output_filename:
-        csv_to_gpx(uploaded_csv, output_filename)
-        with open(output_filename, 'rb') as f:
+        csv_file_content = uploaded_csv.getvalue().decode("utf-8").splitlines()
+        csv_reader = csv.reader(csv_file_content)
+        output_path = output_filename
+        csv_to_gpx(csv_reader, output_path)
+        with open(output_path, 'rb') as f:
             st.download_button(
                 label="Download GPX file",
                 data=f,
